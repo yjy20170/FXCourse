@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="469.0" prefWidth="629.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.ViewController">
+   <children>
+      <AnchorPane prefHeight="60.0" prefWidth="629.0">
+         <children>
+            <Button fx:id="BTN_GROUP" layoutX="10.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_GROUP" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_QUERY" layoutX="80.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_QUERY" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_NEXT" layoutX="150.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_NEXT" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_RANDOM" layoutX="220.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_RANDOM" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_ABSENCE" layoutX="290.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_ABSENCE" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_ADD" layoutX="360.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_ADD" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_DEDUCT" layoutX="430.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_DEDUCT" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_MORE" layoutX="500.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_MORE" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_VIEWMODE" layoutX="570.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_VIEWMODE" prefHeight="50.0" prefWidth="50.0" />
+         </children>
+      </AnchorPane>
+      <TableView fx:id="TBVIEW_STD" layoutY="60.0" prefHeight="409.0" prefWidth="629.0">
+        <columns>
+          <TableColumn fx:id="COL_STD_ID" prefWidth="107.0" text="学号" />
+            <TableColumn fx:id="COL_STD_NAME" prefWidth="131.0" text="姓名" />
+            <TableColumn fx:id="COL_STD_TEAMID" prefWidth="88.0" text="小组" />
+            <TableColumn fx:id="COL_STD_ABSTIME" prefWidth="100.0" text="缺勤次数" />
+            <TableColumn fx:id="COL_STD_SPKTIME" prefWidth="100.0" text="发言次数" />
+            <TableColumn fx:id="COL_STD_USCORE" prefWidth="100.0" text="平时分" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>
