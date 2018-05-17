@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="469.0" prefWidth="629.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.TeamViewController">
+   <children>
+      <AnchorPane prefHeight="60.0" prefWidth="629.0">
+         <children>
+            <Button fx:id="BTN_GROUP" layoutX="10.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_GROUP" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_QUERY" layoutX="80.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_QUERY" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_NEXT" layoutX="150.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_NEXT" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_RANDOM" layoutX="220.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_RANDOM" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_ADD" layoutX="290.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_ADD" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_DEDUCT" layoutX="360.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_DEDUCT" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_MORE" layoutX="430.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickBTN_MORE" prefHeight="50.0" prefWidth="50.0" />
+         </children>
+      </AnchorPane>
+      <TableView fx:id="TBVIEW_TEAM" layoutY="60.0" prefHeight="409.0" prefWidth="629.0">
+        <columns>
+            <TableColumn fx:id="COL_TEAM_ID" prefWidth="88.0" text="小组" />
+          <TableColumn fx:id="COL_TEAM_STDID" prefWidth="158.0" text="成员学号" />
+            <TableColumn fx:id="COL_TEAM_STDNAME" prefWidth="221.0" text="成员姓名" />
+            <TableColumn fx:id="COL_TEAM_SPKTIME" text="发言次数" />
+            <TableColumn fx:id="COL_TEAM_USCORE" prefWidth="81.0" text="平时分" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>

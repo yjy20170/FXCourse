@@ -11,9 +11,9 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mainScene.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("stdScene.fxml"));
             Parent root = loader.load();
-            //((ViewController)loader.getController()).init();
+            ((StdViewController)loader.getController()).setStage(primaryStage);
             Scene scene = new Scene(root);
             //scene.getStylesheets().add("style.css");
             primaryStage.setScene(scene);
