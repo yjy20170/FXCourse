@@ -15,7 +15,7 @@ public class Main extends Application {
             Parent root = loader.load();
             ((StdViewController)loader.getController()).setStage(primaryStage);
             Scene scene = new Scene(root);
-            //scene.getStylesheets().add("style.css");
+            scene.getStylesheets().add("style.css");
             primaryStage.setScene(scene);
             primaryStage.setTitle("ëŠ×ÓücÃûÏµ½y");
             primaryStage.show();

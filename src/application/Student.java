@@ -9,14 +9,16 @@ public class Student {
     private final ObjectProperty<Number> stdID;
     private final StringProperty name;
     private final ObjectProperty<Number> teamID;
+    private final ObjectProperty<Number> callTime;
     private final ObjectProperty<Number> absenceTime;
     private final ObjectProperty<Number> speakTime;
     private final ObjectProperty<Number> usualScore;
 
-    public Student(int stdID, String name, int teamID, int absenceTime, int speakTime, int usualScore){
+    public Student(int stdID, String name, int teamID, int callTime, int absenceTime, int speakTime, int usualScore){
         this.stdID = new SimpleObjectProperty<Number>(stdID);
         this.name = new SimpleStringProperty(name);
         this.teamID = new SimpleObjectProperty<Number>(teamID);
+        this.callTime = new SimpleObjectProperty<Number>(callTime);
         this.absenceTime = new SimpleObjectProperty<Number>(absenceTime);
         this.speakTime = new SimpleObjectProperty<Number>(speakTime);
         this.usualScore = new SimpleObjectProperty<Number>(usualScore);
@@ -51,6 +53,16 @@ public class Student {
     }
     public ObjectProperty<Number> teamIDProperty(){
         return teamID;
+    }
+
+    public Number getCallTime(){
+        return callTime.get();
+    }
+    public void setCallTime(int callTime){
+        this.callTime.set(callTime);
+    }
+    public ObjectProperty<Number> callTimeProperty(){
+        return callTime;
     }
 
     public Number getAbsenceTime(){

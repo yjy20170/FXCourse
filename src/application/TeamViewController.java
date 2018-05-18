@@ -12,8 +12,8 @@ import javafx.stage.Stage;
 
 public class TeamViewController {
     @FXML
-    private Button BTN_GROUP,BTN_QUERY,BTN_NEXT,BTN_RANDOM,
-            BTN_ADD,BTN_DEDUCT,BTN_MORE;
+    private Button BTN_TEAM,BTN_QUERY,BTN_NEXT,BTN_RANDOM,
+            BTN_ADD,BTN_DEDUCT;
     @FXML
     private TableView<Student> TBVIEW_TEAM;
     @FXML
@@ -23,12 +23,12 @@ public class TeamViewController {
     private TableColumn<Student, String> COL_TEAM_STDNAME;
 
     private Manager manager;
-    private Scene scene;
+    private Scene stdScene;
     private Stage stage;
 
-    public void setManager(Manager manager,Stage stage,Scene scene){
+    public void setManager(Manager manager,Stage stage,Scene stdScene){
         this.manager = manager;
-        this.scene = scene;
+        this.stdScene = stdScene;
         this.stage = stage;
     }
 
@@ -49,21 +49,19 @@ public class TeamViewController {
 
     @FXML
     private void initialize(){
-        setButtonImage(BTN_GROUP,"team.png",40,40);
-        setButtonImage(BTN_QUERY,"query.png",40,40);
-        setButtonImage(BTN_NEXT,"next.png",36,36);
-        setButtonImage(BTN_RANDOM,"random.png",40,40);
+        setButtonImage(BTN_TEAM,"student.png",42,42);
+        setButtonImage(BTN_QUERY,"query.png",42,42);
+        setButtonImage(BTN_NEXT,"next.png",42,42);
+        setButtonImage(BTN_RANDOM,"random.png",42,42);
         setButtonImage(BTN_ADD,"add.png",42,42);
         setButtonImage(BTN_DEDUCT,"deduct.png",42,42);
-        setButtonImage(BTN_MORE,"more.png",40,40);
 
-        setButtonTooltip(BTN_GROUP,"个人/小组模式");
+        setButtonTooltip(BTN_TEAM,"个人/小组模式");
         setButtonTooltip(BTN_QUERY,"查找");
         setButtonTooltip(BTN_NEXT,"顺序点名");
         setButtonTooltip(BTN_RANDOM,"随机点名");
         setButtonTooltip(BTN_ADD,"加分");
         setButtonTooltip(BTN_DEDUCT,"扣分");
-        setButtonTooltip(BTN_MORE,"更多");
 
 //        TBVIEW_TEAM.setItems(manager.getStudents());
 //        COL_STD_NAME.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
@@ -74,12 +72,13 @@ public class TeamViewController {
 //        COL_STD_USCORE.setCellValueFactory(cellData -> cellData.getValue().usualScoreProperty());
     }
     @FXML
-    private void onClickBTN_GROUP(){
-        stage.setScene(scene);
+    private void onClickBTN_TEAM(){
+        stage.setScene(stdScene);
     }
+    int a;
     @FXML
     private void onClickBTN_QUERY(){
-
+        System.out.println(a++);
     }
     @FXML
     private void onClickBTN_NEXT(){
