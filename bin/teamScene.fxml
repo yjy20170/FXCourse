@@ -23,7 +23,7 @@
           <TableColumn fx:id="COL_TEAM_STDID" prefWidth="218.0" text="成员学号" />
             <TableColumn fx:id="COL_TEAM_STDNAME" prefWidth="205.0" text="成员姓名" />
             <TableColumn fx:id="COL_TEAM_SPKTIME" prefWidth="85.0" text="发言次数" />
-            <TableColumn fx:id="COL_TEAM_USCORE" prefWidth="78.0" text="平时分" />
+            <TableColumn fx:id="COL_TEAM_USCORE" prefWidth="77.0" text="平时分" />
         </columns>
       </TableView>
    </children>

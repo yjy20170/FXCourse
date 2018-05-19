@@ -7,3 +7,8 @@
 #PANE_QUERY,#PANE_MORE{
     -fx-background-color: #ffffff;
 }
+/*设置每一列内容居中，每一行高度*/
+.table-row-cell,.table-column{
+    -fx-cell-size: 45px;
+    -fx-alignment: center;
+}

@@ -26,7 +26,7 @@ public class TeamViewController {
     private Scene stdScene;
     private Stage stage;
 
-    public void setManager(Manager manager,Stage stage,Scene stdScene){
+    public void setParam(Manager manager,Stage stage,Scene stdScene){
         this.manager = manager;
         this.stdScene = stdScene;
         this.stage = stage;

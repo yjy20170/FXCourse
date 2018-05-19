@@ -9,6 +9,7 @@ public class Student {
     private final ObjectProperty<Number> stdID;
     private final StringProperty name;
     private final ObjectProperty<Number> teamID;
+    private final StringProperty curCall;
     private final ObjectProperty<Number> callTime;
     private final ObjectProperty<Number> absenceTime;
     private final ObjectProperty<Number> speakTime;
@@ -18,6 +19,7 @@ public class Student {
         this.stdID = new SimpleObjectProperty<Number>(stdID);
         this.name = new SimpleStringProperty(name);
         this.teamID = new SimpleObjectProperty<Number>(teamID);
+        this.curCall = new SimpleStringProperty("·ñ");
         this.callTime = new SimpleObjectProperty<Number>(callTime);
         this.absenceTime = new SimpleObjectProperty<Number>(absenceTime);
         this.speakTime = new SimpleObjectProperty<Number>(speakTime);
@@ -53,6 +55,16 @@ public class Student {
     }
     public ObjectProperty<Number> teamIDProperty(){
         return teamID;
+    }
+
+    public String getCurCall(){
+        return curCall.get();
+    }
+    public void setCurCall(){
+        this.curCall.set("ÊÇ");
+    }
+    public StringProperty curCallProperty(){
+        return curCall;
     }
 
     public Number getCallTime(){

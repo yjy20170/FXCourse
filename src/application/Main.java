@@ -17,7 +17,7 @@ public class Main extends Application {
             Scene scene = new Scene(root);
             scene.getStylesheets().add("style.css");
             primaryStage.setScene(scene);
-            primaryStage.setTitle("電子點名系統");
+            primaryStage.setTitle("电子点名系统");
             primaryStage.show();
         } catch(Exception e) {
             e.printStackTrace();

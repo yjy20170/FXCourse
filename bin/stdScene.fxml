@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -7,7 +9,7 @@
 
 <AnchorPane prefHeight="534.0" prefWidth="675.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.StdViewController">
    <children>
-      <AnchorPane id="PANE_ROW" fx:id="PANE_ROW" prefHeight="61.0" prefWidth="675.0">
+      <AnchorPane id="PANE_ROW" prefHeight="61.0" prefWidth="675.0">
          <children>
             <Button fx:id="BTN_TEAM" mnemonicParsing="false" onAction="#onClickBTN_TEAM" prefHeight="61.0" prefWidth="75.0" />
             <Button fx:id="BTN_QUERY" layoutX="75.0" mnemonicParsing="false" onAction="#onClickBTN_QUERY" prefHeight="61.0" prefWidth="75.0" />
@@ -33,19 +35,45 @@
       </AnchorPane>
       <AnchorPane id="PANE_QUERY" fx:id="PANE_QUERY" layoutY="60.0" prefHeight="81.0" prefWidth="675.0">
          <children>
-            <Button fx:id="BTN_GO_QUERY" layoutX="421.0" layoutY="13.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" />
+            <Button fx:id="BTN_GO_QUERY" layoutX="421.0" layoutY="13.0" mnemonicParsing="false" onAction="#onClickBTN_GO_QUERY" prefHeight="50.0" prefWidth="50.0" />
             <TextField fx:id="TEXT_QUERY" layoutX="176.0" layoutY="23.0" prefHeight="36.0" prefWidth="199.0" />
          </children></AnchorPane>
       <TableView fx:id="TBVIEW_STD" layoutY="141.0" prefHeight="395.0" prefWidth="675.0">
         <columns>
-          <TableColumn fx:id="COL_STD_ID" prefWidth="101.0" text="学号" />
-            <TableColumn fx:id="COL_STD_NAME" minWidth="9.0" prefWidth="120.0" text="姓名" />
-            <TableColumn fx:id="COL_STD_TEAMID" minWidth="5.0" prefWidth="77.0" text="小组" />
-            <TableColumn fx:id="COL_STD_CALLTIME" minWidth="0.0" prefWidth="87.0" text="点名次数" />
-            <TableColumn fx:id="COL_STD_ABSTIME" minWidth="9.0" prefWidth="94.0" text="缺勤次数" />
-            <TableColumn fx:id="COL_STD_SPKTIME" minWidth="0.0" prefWidth="100.0" text="发言次数" />
-            <TableColumn fx:id="COL_STD_USCORE" maxWidth="162.0" prefWidth="94.0" text="平时分" />
+          <TableColumn fx:id="COL_STD_ID" text="学号" />
+            <TableColumn fx:id="COL_STD_NAME" minWidth="9.0" prefWidth="122.0" text="姓名" />
+            <TableColumn fx:id="COL_STD_TEAMID" minWidth="5.0" prefWidth="63.0" text="小组" />
+            <TableColumn fx:id="COL_STD_CURCALL" minWidth="5.0" prefWidth="91.0" text="本节课点名" />
+            <TableColumn fx:id="COL_STD_CALLTIME" minWidth="0.0" prefWidth="75.0" text="点名次数" />
+            <TableColumn fx:id="COL_STD_ABSTIME" minWidth="9.0" prefWidth="81.0" text="缺勤次数" />
+            <TableColumn fx:id="COL_STD_SPKTIME" minWidth="0.0" prefWidth="81.0" text="发言次数" />
+            <TableColumn fx:id="COL_STD_USCORE" maxWidth="380.0" prefWidth="83.0" text="平时分" />
         </columns>
       </TableView>
+      <AnchorPane fx:id="PANE_LARGE" layoutY="141.0" prefHeight="395.0" prefWidth="675.0">
+         <children>
+            <Label fx:id="LABEL_NAME" alignment="CENTER" contentDisplay="CENTER" layoutX="34.0" layoutY="174.0" prefHeight="81.0" prefWidth="612.0" text="Label" textAlignment="JUSTIFY">
+               <font>
+                  <Font size="64.0" />
+               </font></Label>
+            <Label fx:id="LABEL_ID" alignment="CENTER" layoutX="56.0" layoutY="65.0" prefHeight="75.0" prefWidth="567.0" text="Label" textAlignment="JUSTIFY">
+               <font>
+                  <Font size="64.0" />
+               </font></Label>
+            <TableView fx:id="TBVIEW_STD_LARGE" focusTraversable="false" layoutX="71.0" layoutY="300.0" prefHeight="74.0" prefWidth="535.0">
+               <columns>
+                  <TableColumn fx:id="COL_STD_TEAMID_LARGE" minWidth="5.0" prefWidth="89.0" text="小组" />
+                  <TableColumn fx:id="COL_STD_CURCALL_LARGE" minWidth="5.0" prefWidth="89.0" text="本节课点名" />
+                  <TableColumn fx:id="COL_STD_CALLTIME_LARGE" minWidth="0.0" prefWidth="88.0" text="点名次数" />
+                  <TableColumn fx:id="COL_STD_ABSTIME_LARGE" minWidth="9.0" prefWidth="82.0" text="缺勤次数" />
+                  <TableColumn fx:id="COL_STD_SPKTIME_LARGE" minWidth="0.0" prefWidth="92.0" text="发言次数" />
+                  <TableColumn fx:id="COL_STD_USCORE_LARGE" maxWidth="380.0" prefWidth="93.0" text="平时分" />
+               </columns>
+               <cursor>
+                  <Cursor fx:constant="DISAPPEAR" />
+               </cursor>
+            </TableView>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>
