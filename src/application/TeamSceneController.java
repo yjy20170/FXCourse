@@ -23,7 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-public class TeamViewController {
+public class TeamSceneController {
     @FXML
     private AnchorPane PANE_QUERY;
     @FXML
@@ -49,7 +49,7 @@ public class TeamViewController {
     private boolean isAllCalled = false;
     private boolean isContinueCall = false;
 
-    public void setParam(Manager manager,Stage stage,Scene stdScene){
+    public void init(Stage stage, Manager manager, Scene stdScene){
         this.manager = manager;
         this.stdScene = stdScene;
         this.stage = stage;
@@ -115,7 +115,7 @@ public class TeamViewController {
         }
     }
     @FXML
-    private void onClickBTN_GO_QUERY(){  //TODO °´³ÉÔ±ËÑË÷
+    private void onClickBTN_GO_QUERY(){
         String string = TEXT_QUERY.getText();
         ObservableList<Team> matchs = FXCollections.observableArrayList();
         for(Team team: manager.getTeams()){
@@ -209,7 +209,6 @@ public class TeamViewController {
     }
     @FXML
     private void onClickBTN_NEXT(){
-        //TODO
         if(isAllCalled && !isContinueCall) return;
         TableViewSelectionModel<Team> selects = TBVIEW_TEAM.getSelectionModel();
         int tbSize = TBVIEW_TEAM.getItems().size();
@@ -238,7 +237,6 @@ public class TeamViewController {
     }
     @FXML
     private void onClickBTN_RANDOM(){
-        //TODO
         if(isAllCalled && !isContinueCall) return;
         int tbSize = TBVIEW_TEAM.getItems().size();
         TableViewSelectionModel<Team> selects = TBVIEW_TEAM.getSelectionModel();
@@ -267,12 +265,10 @@ public class TeamViewController {
     }
     @FXML
     private void onClickBTN_ADD(){
-        //TODO
         action(Manager.ADD);
     }
     @FXML
     private void onClickBTN_DEDUCT(){
-        //TODO
         action(Manager.DED);
     }
 }

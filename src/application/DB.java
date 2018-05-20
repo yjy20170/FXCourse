@@ -76,7 +76,29 @@ public class DB {
             return;
         }
     }
-
+    public void stdInsert(int ID, String name, int teamid, int callTime, int absTime, int spkTime, int uscore){
+        String sql = "insert into students values("
+                + ID+",'"+name+"',"+teamid+","  //字符串注意两侧的单引号
+                +callTime+","+absTime+","
+                +spkTime+","+uscore+");";
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    public void stdDelete(int stdID){
+        String sql = "DELETE FROM students where id = " + stdID + ";";
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
     public void updateStd(int stdID, String colName, int value){
         String sql = "update students set "+colName+"="+value+" where id="+stdID;
         try {
@@ -87,5 +109,28 @@ public class DB {
             e.printStackTrace();
         }
     }
+    public void setConf(String colName, String value){
+        String sql = "update conf set "+colName+"='"+value+"' where 1";
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
+    public String getConf(String colName){
+        String sql = "select "+colName+" from conf";
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            rs.next();
+            return rs.getString(colName);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return "ERROR";
+        }
+    }
 }

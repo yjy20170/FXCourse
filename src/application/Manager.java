@@ -14,13 +14,33 @@ public class Manager {
     public Manager(){
         db = new DB();
         db.init(students, teams);
-        //TODO
+    }
+    public String getPW(){
+        return db.getConf("pw");
+    }
+    public void setPW(String pw){
+        db.setConf("pw",pw);
     }
     public ObservableList<Student> getStudents(){
         return students;
     }
     public ObservableList<Team> getTeams(){
         return teams;
+    }
+    public void joinStudent(int id, String name, int teamid){
+        students.add(new Student(id,name,teamid,0,0,0,0));
+        db.stdInsert(id,name,teamid,0,0,0,0);
+        for(Team team: teams){
+            if((int)team.getTeamID()==teamid){
+                team.setStdsID(team.getStdsID()+", "+id);
+                team.setStdsName(team.getStdsName()+", "+name);
+                return;
+            }
+        }
+    }
+    public void removeStudent(Student std){
+        students.remove(std);
+        db.stdDelete((int)std.getStdID());
     }
     public void studentAction(Student std, int type){
         String typeName = "";

@@ -5,27 +5,39 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
 
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import javafx.util.Pair;
 
-public class StdViewController {
+public class StdSceneController {
     @FXML
     private AnchorPane PANE_MORE,PANE_QUERY, PANE_LARGE;
     @FXML
@@ -59,27 +71,12 @@ public class StdViewController {
     private boolean isAllCalled = false;  //点完所有人
     private boolean isContinueCall = false;  //在点完所有人之后是否继续点名(true蕴含已经点完所有人)
 
-    public void setStage(Stage stage){
+    ObservableList<Student> oneStdList = FXCollections.observableArrayList(); //只用于large模式
+
+    public void init(Stage stage, Manager manager){
         this.stage = stage;
-    }
+        this.manager = manager;
 
-    private void setButtonImage(Button btn, String filename, int width, int height){
-        btn.setGraphic(new ImageView(
-                new Image(
-                        getClass().getClassLoader().getResourceAsStream("res/"+filename),
-                        width,height,false,true
-                )
-        ));
-    }
-
-    private void setButtonTooltip(Button btn, String string){
-        Tooltip tooltip = new Tooltip(string);
-        tooltip.setStyle("-fx-font-size: 15");
-        btn.setTooltip(tooltip);
-    }
-
-    @FXML
-    private void initialize(){
         setButtonImage(BTN_TEAM,"team.png",42,42);
         setButtonImage(BTN_QUERY,"query.png",42,42);
         setButtonImage(BTN_NEXT,"next.png",42,42);
@@ -105,7 +102,6 @@ public class StdViewController {
         hideMore();
         PANE_LARGE.setVisible(false);
 
-        manager = new Manager();
         TBVIEW_STD.setItems(manager.getStudents());
         COL_STD_NAME.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         COL_STD_ID.setCellValueFactory(cellData -> cellData.getValue().stdIDProperty());
@@ -115,7 +111,7 @@ public class StdViewController {
         COL_STD_ABSTIME.setCellValueFactory(cellData -> cellData.getValue().absenceTimeProperty());
         COL_STD_SPKTIME.setCellValueFactory(cellData -> cellData.getValue().speakTimeProperty());
         COL_STD_USCORE.setCellValueFactory(cellData -> cellData.getValue().usualScoreProperty());
-        TBVIEW_STD_LARGE.setItems(FXCollections.observableArrayList());
+        TBVIEW_STD_LARGE.setItems(oneStdList);
         COL_STD_TEAMID_LARGE.setCellValueFactory(cellData -> cellData.getValue().teamIDProperty());
         COL_STD_CURCALL_LARGE.setCellValueFactory(cellData -> cellData.getValue().curCallProperty());
         COL_STD_CALLTIME_LARGE.setCellValueFactory(cellData -> cellData.getValue().callTimeProperty());
@@ -123,6 +119,22 @@ public class StdViewController {
         COL_STD_SPKTIME_LARGE.setCellValueFactory(cellData -> cellData.getValue().speakTimeProperty());
         COL_STD_USCORE_LARGE.setCellValueFactory(cellData -> cellData.getValue().usualScoreProperty());
     }
+
+    private void setButtonImage(Button btn, String filename, int width, int height){
+        btn.setGraphic(new ImageView(
+                new Image(
+                        getClass().getClassLoader().getResourceAsStream("res/"+filename),
+                        width,height,false,true
+                )
+        ));
+    }
+
+    private void setButtonTooltip(Button btn, String string){
+        Tooltip tooltip = new Tooltip(string);
+        tooltip.setStyle("-fx-font-size: 15");
+        btn.setTooltip(tooltip);
+    }
+
     @FXML
     private void onClickBTN_TEAM(){
         if(teamScene == null){
@@ -131,7 +143,7 @@ public class StdViewController {
             try {
                 conversionRoot = loader.load();
                 final Scene stdScene = stage.getScene();
-                ((TeamViewController)loader.getController()).setParam(manager,stage,stdScene);
+                ((TeamSceneController)loader.getController()).init(stage, manager, stdScene);
                 Scene scene = new Scene(conversionRoot);
                 scene.getStylesheets().add("style.css");
                 stage.setScene(scene);
@@ -174,7 +186,8 @@ public class StdViewController {
         TEXT_QUERY.clear();
     }
 
-    private void callNext(TableViewSelectionModel<Student> selects){
+    private void selectNext(){
+        TableViewSelectionModel<Student> selects = TBVIEW_STD.getSelectionModel();
         int tbSize = TBVIEW_STD.getItems().size();
         if(selects.getSelectedIndex()==tbSize-1){
             selects.select(0);
@@ -184,7 +197,6 @@ public class StdViewController {
     }
     private void findAllCalled(){
         isAllCalled = true;
-        //弹出提示
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("");
         alert.setHeaderText("点名");
@@ -192,9 +204,6 @@ public class StdViewController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             isContinueCall = true;
-            return;
-        } else {
-            return;
         }
     }
     @FXML
@@ -204,7 +213,7 @@ public class StdViewController {
         int tbSize = TBVIEW_STD.getItems().size();
         if(isAllCalled){
             if(selects.getSelectedItem() == null) selects.select(0);
-            else callNext(selects);
+            else selectNext();
         }else{
             int test = 0;
             do{
@@ -214,11 +223,11 @@ public class StdViewController {
                 }else if(test++==tbSize){  //表示遍历结束没有找到未点名的
                     break;
                 }
-                callNext(selects);
+                selectNext();
             }while(true);
             if(test>=tbSize){
                 findAllCalled();
-                if (isContinueCall == true) callNext(selects);
+                if (isContinueCall == true) selectNext();
                 else return;
             }else{
                 selects.getSelectedItem().setCurCall();
@@ -255,7 +264,7 @@ public class StdViewController {
         }
         action(Manager.CALL);
     }
-    private void action(int type){
+    private void action(int type){  //把点名、加减分等实质为改变数值（而非删除、创建）的操作放在一起处理
         if(type != Manager.CALL
                 && TBVIEW_STD.getSelectionModel().getSelectedItem() == null){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -269,8 +278,7 @@ public class StdViewController {
             manager.studentAction(std,Manager.SPK);
         }
         if(type == Manager.CALL){
-            LABEL_NAME.setText(std.getName());
-            LABEL_ID.setText(std.getStdID().toString());
+            showStdInLarge();
         }
         if(type == Manager.DED
                 && (int)std.getUsualScore()==0){
@@ -287,7 +295,7 @@ public class StdViewController {
             } else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("无效操作");
-                alert.setHeaderText("错误：只有第一次点名能记缺勤");
+                alert.setHeaderText("错误：只有每节课第一次点到时能记缺勤");
                 alert.showAndWait();
                 return;
             }
@@ -313,25 +321,24 @@ public class StdViewController {
         }else{
             hideMore();
         }
-        //TODO
+    }
+    private void showStdInLarge(){
+        TableViewSelectionModel<Student> selects = TBVIEW_STD.getSelectionModel();
+        if(selects.getSelectedItem() == null) TBVIEW_STD.getSelectionModel().select(0);
+        Student oneStd = selects.getSelectedItem();
+        LABEL_NAME.setText(oneStd.getName());
+        LABEL_ID.setText(oneStd.getStdID().toString());
+        oneStdList.clear();
+        oneStdList.add(oneStd);
     }
     @FXML
     private void onClickBTN_VIEWMODE(){
         isLargeMode = !isLargeMode;
-        //TODO
         if(isLargeMode){
             setButtonImage(BTN_VIEWMODE,"viewmode_small.png",42,42);
             TBVIEW_STD.setVisible(false);
             PANE_LARGE.setVisible(true);
-            TableViewSelectionModel<Student> selects = TBVIEW_STD.getSelectionModel();
-            if(selects.getSelectedItem() == null) selects.select(0);
-            Student oneStd = selects.getSelectedItem();
-            ObservableList<Student> oneStdList = FXCollections.observableArrayList();
-            oneStdList.add(oneStd);
-            LABEL_NAME.setText(oneStd.getName());
-            LABEL_ID.setText(oneStd.getStdID().toString());
-            TBVIEW_STD_LARGE.setItems(oneStdList);
-            TBVIEW_STD_LARGE.getSelectionModel().select(0);
+            showStdInLarge();
         }else{
             setButtonImage(BTN_VIEWMODE,"viewmode_large.png",42,42);
             TBVIEW_STD.setVisible(true);
@@ -339,16 +346,178 @@ public class StdViewController {
         }
     }
     @FXML
-    private void onClickBTN_MORE1(){
+    private void onClickBTN_MORE1(){  //添加学生
+     // Create the custom dialog.
+        Dialog<String[]> dialog = new Dialog<>();
+        dialog.setTitle("添加学生");
+        dialog.setHeaderText("请填写以下三项信息");
 
+        // Set the icon (must be included in the project).
+        dialog.setGraphic(new ImageView(this.getClass().getClassLoader().getResource("res/student.png").toString()));
+
+        // Set the button types.
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // Create the username and password labels and fields.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField idTF = new TextField();
+        TextField nameTF = new TextField();
+        TextField teamidTF = new TextField();
+
+        grid.add(new Label("学号:"), 0, 0);
+        grid.add(idTF, 1, 0);
+        grid.add(new Label("姓名:"), 0, 1);
+        grid.add(nameTF, 1, 1);
+        grid.add(new Label("小组号:"), 0, 2);
+        grid.add(teamidTF, 1, 2);
+        Label info = new Label("");
+        grid.add(info, 1, 3);
+
+        // Enable/Disable login button depending on whether a username was entered.
+        Node okButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.setDisable(true);
+
+        ChangeListener<? super String> listener = (observable, oldValue, newValue) -> {
+            if(idTF.getText().length() * nameTF.getText().length() * teamidTF.getText().length() == 0){
+                info.setText("填写未完成");
+                okButton.setDisable(true);
+            } else if (!idTF.getText().matches("[0-9]*") || !teamidTF.getText().matches("[0-9]*")){
+                info.setText("学号和小组号必须是数字");
+                okButton.setDisable(true);
+            } else {
+                //必须是不存在的学号
+                int id = Integer.parseInt(idTF.getText());
+                for(Student std: manager.getStudents()){
+                    if((int)std.getStdID()!=id){
+                        info.setText("学号不能出现重复");
+                        okButton.setDisable(true);
+                        return;
+                    }
+                }
+//                //必须是已存在的小组号
+//                int teamid = Integer.parseInt(teamidTF.getText());
+//                for(Team team: manager.getTeams()){
+//                    if((int)team.getTeamID()==teamid){
+//                        info.setText("");
+//                        okButton.setDisable(false);
+//                        return;
+//                    }
+//                }
+//                info.setText("只能加入已存在的小组");
+                okButton.setDisable(true);
+            }
+
+        };
+        // Do some validation (using the Java 8 lambda syntax).
+        idTF.textProperty().addListener(listener);
+        nameTF.textProperty().addListener(listener);
+        teamidTF.textProperty().addListener(listener);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Request focus on the username field by default.
+        Platform.runLater(() -> idTF.requestFocus());
+
+        // Convert the result to a username-password-pair when the login button is clicked.
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                return new String[]{idTF.getText(), nameTF.getText(),teamidTF.getText()};
+            }
+            return null;
+        });
+
+        Optional<String[]> result = dialog.showAndWait();
+
+        result.ifPresent(joinResult -> {
+            manager.joinStudent(Integer.parseInt(joinResult[0]), joinResult[1], Integer.parseInt(joinResult[2]));
+        });
     }
     @FXML
     private void onClickBTN_MORE2(){
-
+        if(TBVIEW_STD.getSelectionModel().getSelectedItem() == null){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("无效操作");
+            alert.setHeaderText("错误：请先在列表中选中一行");
+            alert.showAndWait();
+            return;
+        }
+        if(manager.getStudents().size()==1){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("无效操作");
+            alert.setHeaderText("错误：班级中至少要有一名学生");
+            alert.showAndWait();
+            return;
+        }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("");
+        alert.setHeaderText("移除该学生");
+        alert.setContentText("确定要执行移除操作？");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            Student curSelect = TBVIEW_STD.getSelectionModel().getSelectedItem();
+            selectNext();
+            manager.removeStudent(curSelect);
+            showStdInLarge();
+        }
     }
     @FXML
-    private void onClickBTN_MORE3(){
+    private void onClickBTN_MORE3(){  //修改密码
+        // Create the custom dialog.
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Login Dialog");
+        dialog.setHeaderText("Look, a Custom Login Dialog");
 
+        // Set the icon (must be included in the project).
+        dialog.setGraphic(new ImageView(this.getClass().getClassLoader().getResource("res/student.png").toString()));
+
+        // Set the button types.
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // Create the username and password labels and fields.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        PasswordField pw = new PasswordField();
+        PasswordField pwAgain = new PasswordField();
+
+        grid.add(new Label("新密码:"), 0, 0);
+        grid.add(pw, 1, 0);
+        grid.add(new Label("再次输入:"), 0, 1);
+        grid.add(pwAgain, 1, 1);
+
+        // Enable/Disable login button depending on whether a username was entered.
+        Node okButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.setDisable(true);
+
+        // Do some validation (using the Java 8 lambda syntax).
+        pwAgain.textProperty().addListener((observable, oldValue, newValue) -> {
+            okButton.setDisable(!newValue.trim().equals(pw.getText()) || newValue.trim().isEmpty());
+        });
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Request focus on the username field by default.
+        Platform.runLater(() -> pw.requestFocus());
+
+        // Convert the result to a username-password-pair when the login button is clicked.
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                return pwAgain.getText();
+            }
+            return null;
+        });
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(pwResult -> {
+            manager.setPW(pwResult);
+        });
     }
 
     private void showQuery(){

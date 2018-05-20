@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="250.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.LoginSceneController">
+   <children>
+      <ImageView fx:id="IMG_LOGIN_BKG" fitHeight="119.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true" />
+      <Button fx:id="BTN_EXIT" layoutX="372.0" mnemonicParsing="false" onAction="#onClickBTN_EXIT" prefHeight="28.0" prefWidth="28.0" text="" />
+      <ImageView fx:id="IMG_LOGIN_USER" fitHeight="84.0" fitWidth="86.0" layoutX="14.0" layoutY="132.0" pickOnBounds="true" preserveRatio="true" />
+      <TextField editable="false" layoutX="153.0" layoutY="141.0" text="Teacher" />
+      <Label fx:id="LABEL_TIP" layoutX="148.0" layoutY="214.0" prefHeight="23.0" prefWidth="145.0" text="" textFill="RED" />
+      <Label layoutX="120.0" layoutY="145.0" text="帐号" />
+      <Label layoutX="120.0" layoutY="188.0" text="密码" />
+      <Button fx:id="BTN_LOGIN" layoutX="304.0" layoutY="137.0" mnemonicParsing="false" onAction="#onClickBTN_LOGIN" prefHeight="75.0" prefWidth="75.0" text="Button" />
+      <PasswordField fx:id="TEXT_PW" layoutX="153.0" layoutY="184.0" />
+   </children>
+</AnchorPane>
