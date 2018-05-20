@@ -1,23 +1,26 @@
 package application;
 
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class Manager {
     private ObservableList<Student> students = FXCollections.observableArrayList();
+    private ObservableList<Team> teams = FXCollections.observableArrayList();
     private DB db;
 
     public static final int CALL = 0, ABS = 1, ADD = 2, DED = 3, SPK = 4;  //用于统一处理时传递参数
+
     public Manager(){
         db = new DB();
-        db.init(students);
-//        students.add(new Student(15141048,"abc",1,2,3,4,5));
-//        students.add(new Student(15141019,"地方vovim",3,23123,34234235,0,2));
-//        students.add(new Student(15141060,"fevrefbskfverfhfgdferddvrew",1,2,3,5,1));
-        System.out.println(students.size());
+        db.init(students, teams);
+        //TODO
     }
     public ObservableList<Student> getStudents(){
         return students;
+    }
+    public ObservableList<Team> getTeams(){
+        return teams;
     }
     public void studentAction(Student std, int type){
         String typeName = "";
@@ -50,5 +53,27 @@ public class Manager {
             break;
         }
         db.updateStd((int)std.getStdID(), typeName, newNumber);
+    }
+    public void teamAction(Team team, int type){
+        String typeName = "";
+        int newNumber = -1;
+        switch(type){
+        case ADD:
+            typeName = "uscore";
+            newNumber = (int)team.getUsualScore()+1;
+            team.setUsualScore(newNumber);
+            break;
+        case DED:
+            typeName = "uscore";
+            newNumber = (int)team.getUsualScore()-1;
+            team.setUsualScore(newNumber);
+            break;
+        case SPK:
+            typeName = "spktime";
+            newNumber = (int)team.getSpeakTime()+1;
+            team.setSpeakTime(newNumber);
+            break;
+        }
+        db.updateStd((int)team.getTeamID(), typeName, newNumber);
     }
 }

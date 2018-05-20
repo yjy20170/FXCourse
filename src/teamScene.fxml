@@ -17,13 +17,21 @@
             <Button fx:id="BTN_DEDUCT" layoutX="450.0" mnemonicParsing="false" onAction="#onClickBTN_DEDUCT" prefHeight="61.0" prefWidth="75.0" />
          </children>
       </AnchorPane>
+      <AnchorPane id="PANE_QUERY" fx:id="PANE_QUERY" layoutY="60.0" prefHeight="81.0" prefWidth="675.0">
+         <children>
+            <Button fx:id="BTN_GO_QUERY" layoutX="521.0" layoutY="13.0" mnemonicParsing="false" onAction="#onClickBTN_GO_QUERY" prefHeight="50.0" prefWidth="50.0" />
+            <TextField fx:id="TEXT_QUERY" layoutX="276.0" layoutY="23.0" prefHeight="36.0" prefWidth="199.0" />
+            <RadioButton fx:id="RBTN_BY_TEAM" layoutX="66.0" layoutY="33.0" mnemonicParsing="false" text="按小组查询" />
+            <RadioButton fx:id="RBTN_BY_STD" layoutX="166.0" layoutY="33.0" mnemonicParsing="false" text="按组员查询" />
+         </children></AnchorPane>
       <TableView fx:id="TBVIEW_TEAM" layoutY="60.0" prefHeight="474.0" prefWidth="675.0">
         <columns>
-            <TableColumn fx:id="COL_TEAM_ID" prefWidth="88.0" text="小组" />
-          <TableColumn fx:id="COL_TEAM_STDID" prefWidth="218.0" text="成员学号" />
-            <TableColumn fx:id="COL_TEAM_STDNAME" prefWidth="205.0" text="成员姓名" />
-            <TableColumn fx:id="COL_TEAM_SPKTIME" prefWidth="85.0" text="发言次数" />
-            <TableColumn fx:id="COL_TEAM_USCORE" prefWidth="77.0" text="平时分" />
+            <TableColumn fx:id="COL_TEAM_ID" prefWidth="50.0" text="小组" />
+          <TableColumn fx:id="COL_TEAM_STDSID" prefWidth="226.0" text="成员学号" />
+            <TableColumn fx:id="COL_TEAM_STDSNAME" prefWidth="179.0" text="成员姓名" />
+            <TableColumn fx:id="COL_TEAM_CURCALL" prefWidth="80.0" text="本节课发言" />
+            <TableColumn fx:id="COL_TEAM_SPKTIME" prefWidth="80.0" text="发言次数" />
+            <TableColumn fx:id="COL_TEAM_USCORE" prefWidth="70.0" text="平时分" />
         </columns>
       </TableView>
    </children>

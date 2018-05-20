@@ -171,6 +171,7 @@ public class StdViewController {
         }else{
             TBVIEW_STD.setItems(matchs);
         }
+        TEXT_QUERY.clear();
     }
 
     private void callNext(TableViewSelectionModel<Student> selects){
@@ -223,7 +224,6 @@ public class StdViewController {
                 selects.getSelectedItem().setCurCall();
             }
         }
-        System.out.println(selects.getSelectedItem().getName()+" called");
         action(Manager.CALL);
     }
     @FXML
@@ -274,12 +274,24 @@ public class StdViewController {
         }
         if(type == Manager.DED
                 && (int)std.getUsualScore()==0){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("无效操作");
+            alert.setHeaderText("错误：平时分不能低于0");
+            alert.showAndWait();
+            return;
+        }
+        if(type == Manager.ABS){
+            if(std.getCurCall().equals("否")){
+                std.setCurCall();
+                action(Manager.CALL);
+            } else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("无效操作");
-                alert.setHeaderText("错误：平时分不能低于0");
+                alert.setHeaderText("错误：只有第一次点名能记缺勤");
                 alert.showAndWait();
                 return;
             }
+        }
         manager.studentAction(std,type);
     }
     @FXML
