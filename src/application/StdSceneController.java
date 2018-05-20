@@ -1,6 +1,9 @@
 package application;
 
+import java.awt.Desktop;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
@@ -9,6 +12,8 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -19,6 +24,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
@@ -42,7 +48,7 @@ public class StdSceneController {
     @FXML
     private Button BTN_TEAM,BTN_QUERY,BTN_NEXT,BTN_RANDOM,
             BTN_ABSENCE,BTN_ADD,BTN_DEDUCT,BTN_MORE,BTN_VIEWMODE,
-            BTN_MORE1, BTN_MORE2, BTN_MORE3,
+            BTN_MORE1, BTN_MORE2, BTN_MORE3, BTN_MORE4,
             BTN_GO_QUERY;
     @FXML
     private TableView<Student> TBVIEW_STD, TBVIEW_STD_LARGE;
@@ -82,6 +88,11 @@ public class StdSceneController {
         setButtonImage(BTN_MORE,"more.png",42,42);
         setButtonImage(BTN_VIEWMODE,"viewmode_large.png",42,42);
         setButtonImage(BTN_GO_QUERY,"go_query.png",33,33);
+        setButtonImage(BTN_MORE1,"addStd.png",42,42);
+        setButtonImage(BTN_MORE2,"rmvStd.png",42,42);
+        setButtonImage(BTN_MORE3,"setPw.png",42,42);
+        setButtonImage(BTN_MORE4,"about.png",42,42);
+
 
         setButtonTooltip(BTN_TEAM,"个人/小组模式");
         setButtonTooltip(BTN_QUERY,"查找");
@@ -91,6 +102,10 @@ public class StdSceneController {
         setButtonTooltip(BTN_ADD,"加分");
         setButtonTooltip(BTN_DEDUCT,"扣分");
         setButtonTooltip(BTN_MORE,"更多");
+        setButtonTooltip(BTN_MORE1,"添加学生");
+        setButtonTooltip(BTN_MORE2,"移除学生");
+        setButtonTooltip(BTN_MORE3,"修改密码");
+        setButtonTooltip(BTN_MORE4,"关于本软件");
         setButtonTooltip(BTN_VIEWMODE,"列表/聚焦视图");
 
         hideQuery();
@@ -452,18 +467,14 @@ public class StdSceneController {
     }
     @FXML
     private void onClickBTN_MORE3(){  //修改密码
-        // Create the custom dialog.
         Dialog<String> dialog = new Dialog<>();
-        dialog.setTitle("Login Dialog");
-        dialog.setHeaderText("Look, a Custom Login Dialog");
+        dialog.setTitle("修改密码");
+        dialog.setHeaderText("请输入新密码");
 
-        // Set the icon (must be included in the project).
-        dialog.setGraphic(new ImageView(this.getClass().getClassLoader().getResource("res/student.png").toString()));
+        dialog.setGraphic(new ImageView(this.getClass().getClassLoader().getResource("res/"+"setPw.png").toString()));
 
-        // Set the button types.
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        // Create the username and password labels and fields.
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -477,21 +488,18 @@ public class StdSceneController {
         grid.add(new Label("再次输入:"), 0, 1);
         grid.add(pwAgain, 1, 1);
 
-        // Enable/Disable login button depending on whether a username was entered.
         Node okButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
         okButton.setDisable(true);
 
-        // Do some validation (using the Java 8 lambda syntax).
+        //仅当两次都输入且相等时可以点击确定
         pwAgain.textProperty().addListener((observable, oldValue, newValue) -> {
             okButton.setDisable(!newValue.trim().equals(pw.getText()) || newValue.trim().isEmpty());
         });
 
         dialog.getDialogPane().setContent(grid);
 
-        // Request focus on the username field by default.
         Platform.runLater(() -> pw.requestFocus());
 
-        // Convert the result to a username-password-pair when the login button is clicked.
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == ButtonType.OK) {
                 return pwAgain.getText();
@@ -499,11 +507,51 @@ public class StdSceneController {
             return null;
         });
 
-        // Traditional way to get the response value.
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(pwResult -> {
             manager.setPW(pwResult);
         });
+    }
+    @FXML
+    private void onClickBTN_MORE4(){  //about
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("关于本软件");
+        dialog.setHeaderText("   作者：\n      15141019,\n      15141010,\n      15141007,\n      150810??");
+        dialog.setGraphic(new ImageView(this.getClass().getClassLoader().getResource("res/"+"acclaim.png").toString()));
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(30);
+        grid.setPadding(new Insets(20, 100, 0, 20));
+        grid.add(new ImageView(
+                new Image(
+                        getClass().getClassLoader().getResourceAsStream("res/"+"github.png"),
+                        40,40,false,true
+                )
+        ), 0, 0);
+        Hyperlink hyp = new Hyperlink("看看源代码");
+        hyp.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new URI("http://www.github.com/yjy20170/FXCourse"));
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                } catch (URISyntaxException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+            }
+        });
+        grid.add(hyp, 1, 0);
+        dialog.getDialogPane().setContent(grid);
+        dialog.setResultConverter(dialogButton -> {
+            return null;
+        });
+
+        dialog.showAndWait();
     }
 
     private void showQuery(){
