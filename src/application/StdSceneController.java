@@ -7,7 +7,6 @@ import java.util.Random;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,7 +17,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -27,15 +25,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-import javafx.util.Pair;
 
 public class StdSceneController {
     @FXML
@@ -169,7 +164,7 @@ public class StdSceneController {
         String string = TEXT_QUERY.getText();
         ObservableList<Student> matchs = FXCollections.observableArrayList();
         for(Student std: manager.getStudents()){
-            if(std.getStdID().toString().indexOf(string) >= 0
+            if(Integer.toString(std.getStdID()).indexOf(string) >= 0
                     || std.getName().indexOf(string) >= 0){
                 matchs.add(std);
             }
@@ -327,7 +322,7 @@ public class StdSceneController {
         if(selects.getSelectedItem() == null) TBVIEW_STD.getSelectionModel().select(0);
         Student oneStd = selects.getSelectedItem();
         LABEL_NAME.setText(oneStd.getName());
-        LABEL_ID.setText(oneStd.getStdID().toString());
+        LABEL_ID.setText(Integer.toString(oneStd.getStdID()));
         oneStdList.clear();
         oneStdList.add(oneStd);
     }
@@ -392,23 +387,14 @@ public class StdSceneController {
                 //必须是不存在的学号
                 int id = Integer.parseInt(idTF.getText());
                 for(Student std: manager.getStudents()){
-                    if((int)std.getStdID()!=id){
+                    if(std.getStdID()==id){
                         info.setText("学号不能出现重复");
                         okButton.setDisable(true);
                         return;
                     }
                 }
-//                //必须是已存在的小组号
-//                int teamid = Integer.parseInt(teamidTF.getText());
-//                for(Team team: manager.getTeams()){
-//                    if((int)team.getTeamID()==teamid){
-//                        info.setText("");
-//                        okButton.setDisable(false);
-//                        return;
-//                    }
-//                }
-//                info.setText("只能加入已存在的小组");
-                okButton.setDisable(true);
+                info.setText("");
+                okButton.setDisable(false);
             }
 
         };
@@ -433,7 +419,7 @@ public class StdSceneController {
         Optional<String[]> result = dialog.showAndWait();
 
         result.ifPresent(joinResult -> {
-            manager.joinStudent(Integer.parseInt(joinResult[0]), joinResult[1], Integer.parseInt(joinResult[2]));
+            manager.addStudent(Integer.parseInt(joinResult[0]), joinResult[1], Integer.parseInt(joinResult[2]));
         });
     }
     @FXML

@@ -57,22 +57,10 @@ public class DB {
                 spktime = rs.getInt("spktime");
                 uscore = rs.getInt("uscore");
 
-                Statement stmt2 = conn.createStatement();
-                String sql2 = "SELECT * FROM students WHERE teamid = "+teamid+" ORDER BY id";
-                ResultSet rs2 = stmt2.executeQuery(sql2);
-                String stdsID = "", stdsName = "";
-                while(rs2.next()){
-                    //Retrieve by column name
-                    stdsID += rs2.getInt("id")+", ";
-                    stdsName += rs2.getString("name")+", ";
-                }
-                if(!stdsID.equals("")){
-                    teams.add(new Team(teamid, stdsID.substring(0, stdsID.length()-2),
-                            stdsName.substring(0, stdsName.length()-2), spktime, uscore));
-                }
+                teams.add(new Team(teamid, spktime, uscore));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();  //TODO
             return;
         }
     }
@@ -99,8 +87,39 @@ public class DB {
             e.printStackTrace();
         }
     }
-    public void updateStd(int stdID, String colName, int value){
+    public void stdUpdate(int stdID, String colName, int value){
         String sql = "update students set "+colName+"="+value+" where id="+stdID;
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    public void teamInsert(int teamid, int spkTime, int uscore){
+        String sql = "insert into teams values("
+                + teamid+","+spkTime+","+uscore+");";
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    public void teamDelete(int teamID){
+        String sql = "DELETE FROM teams where teamid = " + teamID + ";";
+        try {
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    public void teamUpdate(int teamID, String colName, int value){
+        String sql = "update teams set "+colName+"="+value+" where teamid="+teamID;
         try {
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);

@@ -120,7 +120,7 @@ public class TeamSceneController {
         ObservableList<Team> matchs = FXCollections.observableArrayList();
         for(Team team: manager.getTeams()){
             if(RBTN_BY_TEAM.isSelected()){
-                if(team.getTeamID().toString().indexOf(string) >= 0){
+                if(Integer.toString(team.getTeamID()).indexOf(string) >= 0){
                     matchs.add(team);
                 }
             } else {

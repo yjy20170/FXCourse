@@ -27,8 +27,8 @@ public class Student {
     }
 
 
-    public Number getStdID(){
-        return stdID.get();
+    public int getStdID(){
+        return (int)stdID.get();
     }
     public void setStdID(int stdID){
         this.stdID.set(stdID);
@@ -47,8 +47,8 @@ public class Student {
         return name;
     }
 
-    public Number getTeamID(){
-        return teamID.get();
+    public int getTeamID(){
+        return (int)teamID.get();
     }
     public void setTeamID(int teamID){
         this.teamID.set(teamID);
@@ -67,8 +67,8 @@ public class Student {
         return curCall;
     }
 
-    public Number getCallTime(){
-        return callTime.get();
+    public int getCallTime(){
+        return (int)callTime.get();
     }
     public void setCallTime(int callTime){
         this.callTime.set(callTime);
@@ -77,8 +77,8 @@ public class Student {
         return callTime;
     }
 
-    public Number getAbsenceTime(){
-        return absenceTime.get();
+    public int getAbsenceTime(){
+        return (int)absenceTime.get();
     }
     public void setAbsenceTime(int absenceTime){
         this.absenceTime.set(absenceTime);
@@ -87,8 +87,8 @@ public class Student {
         return absenceTime;
     }
 
-    public Number getSpeakTime(){
-        return speakTime.get();
+    public int getSpeakTime(){
+        return (int)speakTime.get();
     }
     public void setSpeakTime(int speakTime){
         this.speakTime.set(speakTime);
@@ -97,8 +97,8 @@ public class Student {
         return speakTime;
     }
 
-    public Number getUsualScore(){
-        return usualScore.get();
+    public int getUsualScore(){
+        return (int)usualScore.get();
     }
     public void setUsualScore(int usualScore){
         this.usualScore.set(usualScore);
