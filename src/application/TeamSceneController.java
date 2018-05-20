@@ -197,6 +197,7 @@ public class TeamSceneController {
         }
         Team team = TBVIEW_TEAM.getSelectionModel().getSelectedItem();
         manager.teamAction(team,Manager.SPK);
+        if(team.getCurCall().equals("·ñ")) team.setCurCall();
         if(type == Manager.DED
                 && (int)team.getUsualScore()==0){
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);

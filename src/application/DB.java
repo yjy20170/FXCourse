@@ -9,9 +9,11 @@ import java.sql.Statement;
 import javafx.collections.ObservableList;
 
 public class DB {
+    //æ‰‹åŠ¨ä¿®æ”¹
     private static final String USER = "root";
     private static final String PASS = "";
     private static final String DB_NAME = "test";
+
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/"+DB_NAME+"?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai";
     private Connection conn;
@@ -66,7 +68,7 @@ public class DB {
     }
     public void stdInsert(int ID, String name, int teamid, int callTime, int absTime, int spkTime, int uscore){
         String sql = "insert into students values("
-                + ID+",'"+name+"',"+teamid+","  //×Ö·û´®×¢ÒâÁ½²àµÄµ¥ÒıºÅ
+                + ID+",'"+name+"',"+teamid+","  //Ã—Ã–Â·Ã»Â´Â®Ã—Â¢Ã’Ã¢ÃÂ½Â²Ã ÂµÃ„ÂµÂ¥Ã’Ã½ÂºÃ…
                 +callTime+","+absTime+","
                 +spkTime+","+uscore+");";
         try {
