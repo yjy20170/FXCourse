@@ -6,13 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 
 public class DB {
-    //鎵嬪姩淇敼
-    private static final String USER = "root";
-    private static final String PASS = "";
-    private static final String DB_NAME = "test";
+    //第一次使用时需配置的变量
+    private static final String USER = "root";  //MySQL的账户名
+    private static final String PASS = "";  //MySQL的账户密码
+    private static final String DB_NAME = "test";  //导入数据库的名称
 
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/"+DB_NAME+"?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai";
@@ -46,8 +47,8 @@ public class DB {
                 students.add(new Student(id,name,teamid,calltime,abstime,spktime,uscore));
             }
         } catch (Exception e) {
-            e.printStackTrace();  //TODO
-            return;
+            SimpleDialog.alert("错误", "数据库出错，请在MySQL中查看");
+            Platform.exit();
         }
         try{
             Statement stmt = conn.createStatement();
@@ -62,21 +63,21 @@ public class DB {
                 teams.add(new Team(teamid, spktime, uscore));
             }
         } catch (Exception e) {
-            e.printStackTrace();  //TODO
-            return;
+            SimpleDialog.alert("错误", "数据库出错，请在MySQL中查看");
+            Platform.exit();
         }
     }
     public void stdInsert(int ID, String name, int teamid, int callTime, int absTime, int spkTime, int uscore){
         String sql = "insert into students values("
-                + ID+",'"+name+"',"+teamid+","  //脳脰路没麓庐脳垄脪芒脕陆虏脿碌脛碌楼脪媒潞脜
+                + ID+",'"+name+"',"+teamid+","
                 +callTime+","+absTime+","
                 +spkTime+","+uscore+");";
         try {
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            SimpleDialog.alert("错误", "数据库出错，请在MySQL中查看");
+            Platform.exit();
         }
     }
     public void stdDelete(int stdID){
@@ -85,8 +86,8 @@ public class DB {
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            SimpleDialog.alert("错误", "数据库出错，请在MySQL中查看");
+            Platform.exit();
         }
     }
     public void stdUpdate(int stdID, String colName, int value){
@@ -95,8 +96,8 @@ public class DB {
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            SimpleDialog.alert("错误", "数据库出错，请在MySQL中查看");
+            Platform.exit();
         }
     }
     public void teamInsert(int teamid, int spkTime, int uscore){
@@ -106,8 +107,8 @@ public class DB {
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            SimpleDialog.alert("错误", "数据库出错，请在MySQL中查看");
+            Platform.exit();
         }
     }
     public void teamDelete(int teamID){
@@ -116,8 +117,8 @@ public class DB {
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            SimpleDialog.alert("错误", "数据库出错，请在MySQL中查看");
+            Platform.exit();
         }
     }
     public void teamUpdate(int teamID, String colName, int value){
@@ -126,8 +127,8 @@ public class DB {
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            SimpleDialog.alert("错误", "数据库出错，请在MySQL中查看");
+            Platform.exit();
         }
     }
     public void setConf(String colName, String value){
@@ -136,8 +137,8 @@ public class DB {
             Statement stmt = conn.createStatement();
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            SimpleDialog.alert("错误", "数据库出错，请在MySQL中查看");
+            Platform.exit();
         }
     }
 
@@ -149,8 +150,8 @@ public class DB {
             rs.next();
             return rs.getString(colName);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            SimpleDialog.alert("错误", "数据库出错，请在MySQL中查看");
+            Platform.exit();
             return "ERROR";
         }
     }

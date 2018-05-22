@@ -44,7 +44,7 @@
           <TableColumn fx:id="COL_STD_ID" text="学号" />
             <TableColumn fx:id="COL_STD_NAME" minWidth="9.0" prefWidth="122.0" text="姓名" />
             <TableColumn fx:id="COL_STD_TEAMID" minWidth="5.0" prefWidth="63.0" text="小组" />
-            <TableColumn fx:id="COL_STD_CURCALL" minWidth="5.0" prefWidth="91.0" text="本节课点名" />
+            <TableColumn fx:id="COL_STD_STATE" minWidth="5.0" prefWidth="91.0" text="本节课状态" />
             <TableColumn fx:id="COL_STD_CALLTIME" minWidth="0.0" prefWidth="75.0" text="点名次数" />
             <TableColumn fx:id="COL_STD_ABSTIME" minWidth="9.0" prefWidth="81.0" text="缺勤次数" />
             <TableColumn fx:id="COL_STD_SPKTIME" minWidth="0.0" prefWidth="81.0" text="发言次数" />
@@ -64,7 +64,7 @@
             <TableView fx:id="TBVIEW_STD_LARGE" focusTraversable="false" layoutX="71.0" layoutY="300.0" prefHeight="74.0" prefWidth="535.0">
                <columns>
                   <TableColumn fx:id="COL_STD_TEAMID_LARGE" minWidth="5.0" prefWidth="89.0" text="小组" />
-                  <TableColumn fx:id="COL_STD_CURCALL_LARGE" minWidth="5.0" prefWidth="89.0" text="本节课点名" />
+                  <TableColumn fx:id="COL_STD_STATE_LARGE" minWidth="5.0" prefWidth="89.0" text="本节课点名" />
                   <TableColumn fx:id="COL_STD_CALLTIME_LARGE" minWidth="0.0" prefWidth="88.0" text="点名次数" />
                   <TableColumn fx:id="COL_STD_ABSTIME_LARGE" minWidth="9.0" prefWidth="82.0" text="缺勤次数" />
                   <TableColumn fx:id="COL_STD_SPKTIME_LARGE" minWidth="0.0" prefWidth="92.0" text="发言次数" />

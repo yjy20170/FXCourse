@@ -9,17 +9,18 @@ public class Student {
     private final ObjectProperty<Number> stdID;
     private final StringProperty name;
     private final ObjectProperty<Number> teamID;
-    private final StringProperty curCall;
+    private final StringProperty state;
     private final ObjectProperty<Number> callTime;
     private final ObjectProperty<Number> absenceTime;
     private final ObjectProperty<Number> speakTime;
     private final ObjectProperty<Number> usualScore;
+    public static final String UNK = "未点名", WAIT = "等待响应", ABS = "缺勤", PRE = "出勤";
 
     public Student(int stdID, String name, int teamID, int callTime, int absenceTime, int speakTime, int usualScore){
         this.stdID = new SimpleObjectProperty<Number>(stdID);
         this.name = new SimpleStringProperty(name);
         this.teamID = new SimpleObjectProperty<Number>(teamID);
-        this.curCall = new SimpleStringProperty("否");
+        this.state = new SimpleStringProperty(UNK);
         this.callTime = new SimpleObjectProperty<Number>(callTime);
         this.absenceTime = new SimpleObjectProperty<Number>(absenceTime);
         this.speakTime = new SimpleObjectProperty<Number>(speakTime);
@@ -57,14 +58,14 @@ public class Student {
         return teamID;
     }
 
-    public String getCurCall(){
-        return curCall.get();
+    public String getState(){
+        return state.get();
     }
-    public void setCurCall(){
-        this.curCall.set("是");
+    public void setState(String string){
+        this.state.set(string);
     }
-    public StringProperty curCallProperty(){
-        return curCall;
+    public StringProperty stateProperty(){
+        return state;
     }
 
     public int getCallTime(){

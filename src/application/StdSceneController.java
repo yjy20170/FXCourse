@@ -3,13 +3,13 @@ package application;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,7 +20,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -58,8 +57,8 @@ public class StdSceneController {
             COL_STD_TEAMID_LARGE, COL_STD_CALLTIME_LARGE,
             COL_STD_ABSTIME_LARGE, COL_STD_SPKTIME_LARGE, COL_STD_USCORE_LARGE;
     @FXML
-    private TableColumn<Student, String> COL_STD_NAME, COL_STD_CURCALL,
-            COL_STD_CURCALL_LARGE;
+    private TableColumn<Student, String> COL_STD_NAME, COL_STD_STATE,
+            COL_STD_STATE_LARGE;
 
     private Stage stage;
     private Scene teamScene = null;
@@ -69,8 +68,26 @@ public class StdSceneController {
     private boolean isShowMore = false;
     private boolean isShowQuery = false;
 
-    private boolean isAllCalled = false;  //点完所有人
-    private boolean isContinueCall = false;  //在点完所有人之后是否继续点名(true蕴含已经点完所有人)
+    private boolean isAllCalled = false;
+    /*
+     *  Student的“本节课状态”getState()初始为未点名，点过后变成出勤或缺勤
+     * 设置isAllCalled的意义为，未点完时点击“点名”，会从所有状态为未点名的人中选择
+     * 点完后，改为从出勤的人中选择，而不再选择缺勤的人
+     *
+     */
+    private boolean isAllCalledInResult = false;  //在查询结果中点名时使用，不影响正常情况的点名
+    private boolean isInResult = false;  //作用同上
+    private boolean getCurAllCalled(){
+        if(isInResult) return isAllCalledInResult;
+        else return isAllCalled;
+    }
+    private void setCurAllCalled(boolean curIsAllCalled){
+        if(isInResult) isAllCalledInResult = curIsAllCalled;
+        else isAllCalled = curIsAllCalled;
+    }
+    private boolean isRandom = false;  //点名方式，默认为顺序点名
+
+    private boolean isChangedByUser = true;  //由于tableview的changeListener无法区分鼠标点击与代码控制，以此区分
 
     ObservableList<Student> oneStdList = FXCollections.observableArrayList(); //只用于large模式
 
@@ -116,18 +133,38 @@ public class StdSceneController {
         COL_STD_NAME.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         COL_STD_ID.setCellValueFactory(cellData -> cellData.getValue().stdIDProperty());
         COL_STD_TEAMID.setCellValueFactory(cellData -> cellData.getValue().teamIDProperty());
-        COL_STD_CURCALL.setCellValueFactory(cellData -> cellData.getValue().curCallProperty());
+        COL_STD_STATE.setCellValueFactory(cellData -> cellData.getValue().stateProperty());
         COL_STD_CALLTIME.setCellValueFactory(cellData -> cellData.getValue().callTimeProperty());
         COL_STD_ABSTIME.setCellValueFactory(cellData -> cellData.getValue().absenceTimeProperty());
         COL_STD_SPKTIME.setCellValueFactory(cellData -> cellData.getValue().speakTimeProperty());
         COL_STD_USCORE.setCellValueFactory(cellData -> cellData.getValue().usualScoreProperty());
         TBVIEW_STD_LARGE.setItems(oneStdList);
         COL_STD_TEAMID_LARGE.setCellValueFactory(cellData -> cellData.getValue().teamIDProperty());
-        COL_STD_CURCALL_LARGE.setCellValueFactory(cellData -> cellData.getValue().curCallProperty());
+        COL_STD_STATE_LARGE.setCellValueFactory(cellData -> cellData.getValue().stateProperty());
         COL_STD_CALLTIME_LARGE.setCellValueFactory(cellData -> cellData.getValue().callTimeProperty());
         COL_STD_ABSTIME_LARGE.setCellValueFactory(cellData -> cellData.getValue().absenceTimeProperty());
         COL_STD_SPKTIME_LARGE.setCellValueFactory(cellData -> cellData.getValue().speakTimeProperty());
         COL_STD_USCORE_LARGE.setCellValueFactory(cellData -> cellData.getValue().usualScoreProperty());
+
+        TBVIEW_STD.getSelectionModel().selectedItemProperty().addListener(// 选中某一行
+            new ChangeListener<Student>() {
+                @Override
+                public void changed(
+                        ObservableValue<? extends Student> observableValue,
+                        Student oldItem, Student newItem) {
+                    if(isChangedByUser){
+                        //显示查询结果时也会出现oldItem == null，必须用isShowQuery进行判断
+                        if(oldItem == null){
+                            if(newItem.getState().equals(Student.UNK)) newItem.setState(Student.WAIT);
+                        }
+                        else if(!oldItem.equals(newItem)){
+                            if(oldItem.getState().equals(Student.WAIT)) oldItem.setState(Student.UNK);
+                            if(newItem != null && newItem.getState().equals(Student.UNK)) newItem.setState(Student.WAIT);
+                        }
+                    }
+                }
+            }
+        );
     }
 
     private void setButtonImage(Button btn, String filename, int width, int height){
@@ -172,6 +209,7 @@ public class StdSceneController {
             showQuery();
         }else{
             hideQuery();
+            isInResult = false;
         }
     }
     @FXML
@@ -185,132 +223,151 @@ public class StdSceneController {
             }
         }
         if(matchs.size()==0){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("查询结果");
-            alert.setHeaderText("错误：没有找到符合条件的人");
-            alert.showAndWait();
+            SimpleDialog.alert("查询结果", "错误：没有找到符合条件的人");
             return;
         }else{
             TBVIEW_STD.setItems(matchs);
         }
+        isInResult = true;  //搜出符合条件的才进入结果列表
+        setCurAllCalled(false);  //每次新的查询结果都重置该变量
         TEXT_QUERY.clear();
+        showStdInLarge();
+    }
+
+    private void action(int type){  //把点名、加减分等实质为改变数值（而非删除、创建）的操作放在一起处理
+        if(type != Manager.CALL
+                && TBVIEW_STD.getSelectionModel().getSelectedItem() == null){
+            SimpleDialog.alert("无效操作","错误：请先在列表中选中一行");
+            return;
+        }
+        Student std = TBVIEW_STD.getSelectionModel().getSelectedItem();
+        switch(type){
+        case Manager.DED:
+            if((int)std.getUsualScore()==0){
+                SimpleDialog.alert("无效操作","错误：平时分不能低于0");
+                return;
+            }
+            //没有break
+        case Manager.ADD:
+            if(std.getState().equals(Student.ABS)){
+                SimpleDialog.alert("无效操作", "错误：学生缺勤，不能给分");
+                return;
+            }else{
+                std.setState(Student.PRE);
+            }
+            manager.studentAction(std,Manager.SPK);
+            break;
+        case Manager.CALL:
+            showStdInLarge();
+            if(std.getState().equals(Student.UNK)){
+                std.setState(Student.WAIT);
+            }
+            break;
+        case Manager.ABS:
+            if(std.getState().equals(Student.WAIT)){
+                std.setState(Student.ABS);
+                action(Manager.CALL);
+                if(isRandom){
+                    onClickBTN_RANDOM();
+                }else{
+                    onClickBTN_NEXT();
+                }
+            } else {
+                SimpleDialog.alert("无效操作", "错误：只有每节课第一次点到时能记缺勤");
+                return;
+            }
+            break;
+        }
+        manager.studentAction(std,type);
     }
 
     private void selectNext(){
         TableViewSelectionModel<Student> selects = TBVIEW_STD.getSelectionModel();
         int tbSize = TBVIEW_STD.getItems().size();
+        isChangedByUser = false;
         if(selects.getSelectedIndex()==tbSize-1){
             selects.select(0);
         }else{
             selects.selectNext();
         }
+        isChangedByUser = true;
+    }
+    private boolean selectNext(String state){
+        TableViewSelectionModel<Student> selects = TBVIEW_STD.getSelectionModel();
+        isChangedByUser = false;
+        if(selects.getSelectedItem() == null) selects.select(0);
+        else selectNext();
+        isChangedByUser = true;
+        int tbSize = TBVIEW_STD.getItems().size();
+        int test = 0;
+        do{
+            if(selects.getSelectedItem().getState().equals(state)){
+                return true;
+            }else if(test++==tbSize){  //表示遍历结束没有找到未点名的
+                break;
+            }
+            selectNext();
+        }while(true);
+        return false;
     }
     private void findAllCalled(){
-        isAllCalled = true;
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("");
-        alert.setHeaderText("点名");
-        alert.setContentText("已点完列表中所有同学，是否继续点名？");
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            isContinueCall = true;
-        }
+        setCurAllCalled(true);
+        SimpleDialog.alert("点名", "已点完列表中所有同学，开始重复点名");
     }
     @FXML
     private void onClickBTN_NEXT(){
-        if(isAllCalled && !isContinueCall) return;
-        TableViewSelectionModel<Student> selects = TBVIEW_STD.getSelectionModel();
-        int tbSize = TBVIEW_STD.getItems().size();
-        if(isAllCalled){
-            if(selects.getSelectedItem() == null) selects.select(0);
-            else selectNext();
+        isRandom = false;
+//        if(isAllCalled && !isContinueCall) return;
+        Student select = TBVIEW_STD.getSelectionModel().getSelectedItem();
+        if(select != null
+                && select.getState().equals(Student.WAIT)) {  //先前等待响应的学生
+            select.setState(Student.PRE);
+        }
+        if(getCurAllCalled()){
+            selectNext(Student.PRE);
         }else{
-            int test = 0;
-            do{
-                if(selects.getSelectedItem() == null) selects.select(0);
-                if(selects.getSelectedItem().getCurCall().equals("否")){
-                    break;
-                }else if(test++==tbSize){  //表示遍历结束没有找到未点名的
-                    break;
-                }
-                selectNext();
-            }while(true);
-            if(test>=tbSize){
+            if(!selectNext(Student.UNK)){  //优先选择未点过的，发现已点完
                 findAllCalled();
-                if (isContinueCall == true) selectNext();
-                else return;
-            }else{
-                selects.getSelectedItem().setCurCall();
+//                if (!isContinueCall) return;  //不继续点名
             }
         }
         action(Manager.CALL);
+    }
+    private boolean selectRandom(String state){
+        TableViewSelectionModel<Student> selects = TBVIEW_STD.getSelectionModel();
+        ArrayList<Student> stds = new ArrayList<Student>();
+        for(Student std: TBVIEW_STD.getItems()){
+            if(std.getState().equals(state)) stds.add(std);
+        }
+        if(stds.size()==0){
+            return false;
+        }
+        int ran = new Random().nextInt(stds.size());
+
+        isChangedByUser = false;
+        selects.select(stds.get(ran));
+        isChangedByUser = true;
+        return true;
     }
     @FXML
     private void onClickBTN_RANDOM(){
-        if(isAllCalled && !isContinueCall) return;
-        int tbSize = TBVIEW_STD.getItems().size();
-        TableViewSelectionModel<Student> selects = TBVIEW_STD.getSelectionModel();
-        if(isAllCalled){
-            int ran = new Random().nextInt(tbSize);
-            selects.select(ran);
+        isRandom = true;
+//        if(isAllCalled && !isContinueCall) return;
+        Student select = TBVIEW_STD.getSelectionModel().getSelectedItem();
+        if(select != null
+                && select.getState().equals(Student.WAIT)) {  //先前等待响应的学生
+            select.setState(Student.PRE);
+        }
+
+        if(getCurAllCalled()){
+            selectRandom(Student.PRE);
         }else{
-            ArrayList<Student> stds = new ArrayList<Student>();
-            for(Student std: TBVIEW_STD.getItems()){
-                if(std.getCurCall().equals("否")) stds.add(std);
-            }
-            if(stds.size()==0){
+            if(!selectRandom(Student.UNK)){
                 findAllCalled();
-                if(isContinueCall){
-                    int ran = new Random().nextInt(tbSize);
-                    selects.select(ran);
-                }else{
-                    return;
-                }
-            }else{
-                int ran = new Random().nextInt(stds.size());
-                selects.select(stds.get(ran));
-                selects.getSelectedItem().setCurCall();
+//                if(!isContinueCall) return;
             }
         }
         action(Manager.CALL);
-    }
-    private void action(int type){  //把点名、加减分等实质为改变数值（而非删除、创建）的操作放在一起处理
-        if(type != Manager.CALL
-                && TBVIEW_STD.getSelectionModel().getSelectedItem() == null){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("无效操作");
-            alert.setHeaderText("错误：请先在列表中选中一行");
-            alert.showAndWait();
-            return;
-        }
-        Student std = TBVIEW_STD.getSelectionModel().getSelectedItem();
-        if(type == Manager.ADD || type == Manager.DED){
-            manager.studentAction(std,Manager.SPK);
-        }
-        if(type == Manager.CALL){
-            showStdInLarge();
-        }
-        if(type == Manager.DED
-                && (int)std.getUsualScore()==0){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("无效操作");
-            alert.setHeaderText("错误：平时分不能低于0");
-            alert.showAndWait();
-            return;
-        }
-        if(type == Manager.ABS){
-            if(std.getCurCall().equals("否")){
-                std.setCurCall();
-                action(Manager.CALL);
-            } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("无效操作");
-                alert.setHeaderText("错误：只有每节课第一次点到时能记缺勤");
-                alert.showAndWait();
-                return;
-            }
-        }
-        manager.studentAction(std,type);
     }
     @FXML
     private void onClickBTN_ABSENCE(){
@@ -440,24 +497,14 @@ public class StdSceneController {
     @FXML
     private void onClickBTN_MORE2(){
         if(TBVIEW_STD.getSelectionModel().getSelectedItem() == null){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("无效操作");
-            alert.setHeaderText("错误：请先在列表中选中一行");
-            alert.showAndWait();
+            SimpleDialog.alert("无效操作", "错误：请先在列表中选中一行");
             return;
         }
         if(manager.getStudents().size()==1){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("无效操作");
-            alert.setHeaderText("错误：班级中至少要有一名学生");
-            alert.showAndWait();
+            SimpleDialog.alert("无效操作", "错误：班级中至少要有一名学生");
             return;
         }
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("");
-        alert.setHeaderText("移除该学生");
-        alert.setContentText("确定要执行移除操作？");
-        Optional<ButtonType> result = alert.showAndWait();
+        Optional<ButtonType> result = SimpleDialog.ask("移除该学生", "确定要执行移除操作？");
         if (result.get() == ButtonType.OK) {
             Student curSelect = TBVIEW_STD.getSelectionModel().getSelectedItem();
             selectNext();
@@ -516,7 +563,7 @@ public class StdSceneController {
     private void onClickBTN_MORE4(){  //about
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("关于本软件");
-        dialog.setHeaderText("   作者：\n      15141019,\n      15141010,\n      15141007,\n      150810??");
+        dialog.setHeaderText("   作者：\n      15141019,\n      15141010,\n      15141007,\n      15081017");
         dialog.setGraphic(new ImageView(this.getClass().getClassLoader().getResource("res/"+"acclaim.png").toString()));
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
 
@@ -533,15 +580,11 @@ public class StdSceneController {
         Hyperlink hyp = new Hyperlink("看看源代码");
         hyp.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent e) {
+            public void handle(ActionEvent event) {
                 try {
                     Desktop.getDesktop().browse(new URI("http://www.github.com/yjy20170/FXCourse"));
-                } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                } catch (URISyntaxException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                } catch (Exception e) {
+                    SimpleDialog.alert("错误", "无法打开网页");
                 }
             }
         });

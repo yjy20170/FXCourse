@@ -13,7 +13,7 @@ public class Manager {
     private ObservableList<Team> teams = FXCollections.observableArrayList();
     private HashMap<Integer,Team> teamMap = new HashMap<Integer,Team>();  //用于快速获取teamID对应的Team对象
 
-    public static final int CALL = 0, ABS = 1, ADD = 2, DED = 3, SPK = 4;  //用于统一处理时传递参数
+    public static final int CALL = 0, ABS = 1, ADD = 2, DED = 3, SPK = 4;//, PRE = 5;  //用于统一处理时传递参数
 
     public Manager(){
         db = new DB();
@@ -80,7 +80,7 @@ public class Manager {
             db.teamDelete(team.getTeamID());
         }
     }
-    public void studentAction(Student std, int type){
+    public void studentAction(Student std, int type){  //仅负责调用数据库
         String typeName = "";
         int newNumber = -1;
         switch(type){
