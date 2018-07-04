@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
 
+import com.sun.javafx.scene.control.skin.TableViewSkin;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -332,6 +335,7 @@ public class StdSceneController {
             }
         }
         action(Manager.CALL);
+        keepSelectedInView();
     }
     private boolean selectRandom(String state){
         TableViewSelectionModel<Student> selects = TBVIEW_STD.getSelectionModel();
@@ -349,6 +353,7 @@ public class StdSceneController {
         isChangedByUser = true;
         return true;
     }
+
     @FXML
     private void onClickBTN_RANDOM(){
         isRandom = true;
@@ -368,6 +373,7 @@ public class StdSceneController {
             }
         }
         action(Manager.CALL);
+        keepSelectedInView();
     }
     @FXML
     private void onClickBTN_ABSENCE(){
@@ -491,6 +497,7 @@ public class StdSceneController {
         Optional<String[]> result = dialog.showAndWait();
 
         result.ifPresent(joinResult -> {
+            setCurAllCalled(false);  //刚加入的学生必然没有点过
             manager.addStudent(Integer.parseInt(joinResult[0]), joinResult[1], Integer.parseInt(joinResult[2]));
         });
     }
@@ -642,4 +649,37 @@ public class StdSceneController {
         PANE_LARGE.setLayoutY(60);
         BTN_MORE.setStyle("");
     }
+
+    private void keepSelectedInView(){
+        int index = TBVIEW_STD.getSelectionModel().getSelectedIndex();
+        int[] range = getVisibleRows();
+        if(index < range[0] || index > range[1]){
+            TBVIEW_STD.scrollTo(index);
+        }
+
+    }
+    public int[] getVisibleRows() {
+          TableViewSkin<?> skin = (TableViewSkin<?>) TBVIEW_STD.getSkin();
+          if (skin == null) return new int[] {0, 0};
+          VirtualFlow<?> flow = (VirtualFlow<?>) skin.getChildren().get(1);
+          int idxFirst;
+          int idxLast;
+          if (flow != null &&
+                  flow.getFirstVisibleCellWithinViewPort() != null &&
+                  flow.getLastVisibleCellWithinViewPort() != null) {
+              idxFirst = flow.getFirstVisibleCellWithinViewPort().getIndex();
+              if (idxFirst > TBVIEW_STD.getItems().size()) {
+                  idxFirst = TBVIEW_STD.getItems().size() - 1;
+              }
+              idxLast = flow.getLastVisibleCellWithinViewPort().getIndex();
+              if (idxLast > TBVIEW_STD.getItems().size()) {
+                  idxLast = TBVIEW_STD.getItems().size() - 1;
+              }
+          }
+          else {
+              idxFirst = 0;
+              idxLast = 0;
+          }
+          return new int[]{idxFirst, idxLast};
+      }
 }
